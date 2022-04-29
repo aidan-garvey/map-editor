@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.geometry.Insets?>
+
+<?import javafx.scene.text.Text?>
+<fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx"
+         xmlns:fx="http://javafx.com/fxml"
+         spacing="5">
+
+    <padding>
+        <Insets topRightBottomLeft="5"/>
+    </padding>
+
+    <Separator/>
+
+    <!-- Checkbox for user to select the presence of a door -->
+    <CheckBox fx:id="hasDoorButton" text="Contains Door?" onAction="#toggleDoor"/>
+
+    <GridPane fx:id="doorOptionsPane" hgap="5" vgap="5">
+        <HBox spacing="5"
+              GridPane.columnIndex="0"
+              GridPane.rowIndex="0"
+              GridPane.columnSpan="2">
+
+            <!-- Switch between door running north-south or east-west -->
+            <Label text="Orientation:" alignment="CENTER"/>
+            <!-- text will be the current orientation, set by code -->
+            <Button fx:id="orientButton" onAction="#orientDoor"/>
+
+        </HBox>
+
+        <Label text="Position in Sector"
+               GridPane.columnIndex="0"
+               GridPane.rowIndex="1"
+               GridPane.columnSpan="2"/>
+
+        <!-- Switch between three different door positions -->
+        <!-- todo: label for each button will depend on orientation, set by code -->
+        <RadioButton fx:id="doorPos1" onAction="#changeDoorPos"
+                     GridPane.columnIndex="0"
+                     GridPane.rowIndex="2"
+                     GridPane.columnSpan="2">
+            <toggleGroup>
+                <ToggleGroup fx:id="doorPosGroup"/>
+            </toggleGroup>
+        </RadioButton>
+
+        <!-- doorPos2 can always be called "centre" regardless of north-south or east-west -->
+        <RadioButton fx:id="doorPos2" onAction="#changeDoorPos"
+                     text="Centre"
+                     GridPane.columnIndex="0"
+                     GridPane.rowIndex="3"
+                     GridPane.columnSpan="2">
+            <toggleGroup>
+                <fx:reference source="doorPosGroup"/>
+            </toggleGroup>
+        </RadioButton>
+
+        <RadioButton fx:id="doorPos3" onAction="#changeDoorPos"
+                     GridPane.columnIndex="0"
+                     GridPane.rowIndex="4"
+                     GridPane.columnSpan="2">
+            <toggleGroup>
+                <fx:reference source="doorPosGroup"/>
+            </toggleGroup>
+        </RadioButton>
+
+        <Separator
+            GridPane.columnIndex="0"
+            GridPane.rowIndex="5"
+            GridPane.columnSpan="2"/>
+
+        <!-- Toggle horizontal or vertical opening -->
+        <RadioButton fx:id="vOpenButton" onAction="#changeDirection"
+                     text="Opens Vertically"
+                     GridPane.columnIndex="0"
+                     GridPane.rowIndex="6"
+                     GridPane.columnSpan="2">
+            <toggleGroup>
+                <ToggleGroup fx:id="directionGroup"/>
+            </toggleGroup>
+        </RadioButton>
+
+        <RadioButton fx:id="hOpenButton" onAction="#changeDirection"
+                     text="Opens Horizontally"
+                     GridPane.columnIndex="0"
+                     GridPane.rowIndex="7"
+                     GridPane.columnSpan="2">
+            <toggleGroup>
+                <fx:reference source="directionGroup"/>
+            </toggleGroup>
+        </RadioButton>
+
+        <Label text="Door opens from:"
+            GridPane.columnIndex="0"
+            GridPane.rowIndex="8"
+            GridPane.columnSpan="2"/>
+
+        <!-- Toggle where the door opens -->
+        <!-- todo: button labels depend on door orientation, set by code -->
+        <RadioButton fx:id="doorOpen1" onAction="#changeOpening"
+                     GridPane.columnIndex="0"
+                     GridPane.rowIndex="9"
+                     GridPane.columnSpan="2">
+            <toggleGroup>
+                <ToggleGroup fx:id="doorOpenGroup"/>
+            </toggleGroup>
+        </RadioButton>
+
+        <!-- The middle option can always be described the same way -->
+        <RadioButton fx:id="doorOpen2" onAction="#changeOpening"
+                     text="Centre (Double Door)"
+                     GridPane.columnIndex="0"
+                     GridPane.rowIndex="10"
+                     GridPane.columnSpan="2">
+            <toggleGroup>
+                <fx:reference source="doorOpenGroup"/>
+            </toggleGroup>
+        </RadioButton>
+
+        <RadioButton fx:id="doorOpen3" onAction="#changeOpening"
+                     GridPane.columnIndex="0"
+                     GridPane.rowIndex="11"
+                     GridPane.columnSpan="2">
+            <toggleGroup>
+                <fx:reference source="doorOpenGroup"/>
+            </toggleGroup>
+        </RadioButton>
+
+        <!-- Set time door takes to open -->
+        <Label text="Time to Open/Close (seconds)"
+               GridPane.columnIndex="0"
+               GridPane.rowIndex="12"
+               GridPane.columnSpan="2"/>
+        <!-- If user wants to set an absurd value, they can use this TextField -->
+        <TextField fx:id="speedTextField" onAction="#setDoorSpeed"
+                   GridPane.columnIndex="0"
+                   GridPane.rowIndex="13"/>
+        <!-- Otherwise, they can use this slider -->
+        <Slider fx:id="speedSlider" min="0" max="5" value="0.5" blockIncrement="0.1"
+                GridPane.columnIndex="0"
+                GridPane.rowIndex="14"/>
+
+        <!-- Select a texture for each side of the door -->
+
+        <!-- Will say "North Texture" or "East Texture" depending on the orientation -->
+        <Text fx:id="texLabel1"
+              GridPane.columnIndex="0"
+              GridPane.rowIndex="15"
+              GridPane.columnSpan="2"/>
+        <!-- Buttons and TextField to choose texture -->
+        <HBox spacing="5"
+              GridPane.columnIndex="0"
+              GridPane.rowIndex="16"
+              GridPane.columnSpan="2">
+            <Button fx:id="texButton1" onAction="#openTex1"/>
+            <!-- It would be very confusing to have invisible doors -->
+            <!-- <Button fx:id="clearButton1" onAction="#clearTex1"/> -->
+            <TextField fx:id="fileText1" onAction="#setTex1"/>
+        </HBox>
+
+        <!-- Will say "South Texture" or "West Texture" depending on orientation -->
+        <Text fx:id="texLabel2"
+              GridPane.columnIndex="0"
+              GridPane.rowIndex="17"
+              GridPane.columnSpan="2"/>
+        <!-- Buttons and TextField to choose texture -->
+        <HBox spacing="5"
+              GridPane.columnIndex="0"
+              GridPane.rowIndex="18"
+              GridPane.columnSpan="2">
+            <Button fx:id="texButton2" onAction="#openTex2"/>
+            <!-- It would be very confusing to have invisible doors -->
+            <!-- <Button fx:id="clearButton2" onAction="#clearTex2"/> -->
+            <TextField fx:id="fileText2" onAction="#setTex2"/>
+        </HBox>
+
+        <!-- User can select if door is locked, and which key it requires -->
+        <HBox spacing="5"
+              GridPane.columnIndex="0"
+              GridPane.rowIndex="19"
+              GridPane.columnSpan="2">
+            <Label text="Requires Key:"/>
+            <!-- Code will insert the name of the current key into this button -->
+            <Button fx:id="keySelect" onAction="#chooseKey"/>
+        </HBox>
+
+        <!-- Doors can optionally be opened by shooting them -->
+        <CheckBox fx:id="shootToOpenButton" text="Door can be shot open?" onAction="#toggleShootToOpen"
+                  GridPane.columnIndex="0"
+                  GridPane.rowIndex="20"
+                  GridPane.columnSpan="2"/>
+
+    </GridPane>
+
+</fx:root>

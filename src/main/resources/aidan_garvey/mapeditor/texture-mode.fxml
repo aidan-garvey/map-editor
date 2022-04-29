@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.text.Text?>
+<?import javafx.geometry.Insets?>
+
+<!-- Content displayed when user is in Texture Mode -->
+<!-- Controller is set by TextureModeOptions.java -->
+
+<fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx"
+         xmlns:fx="http://javafx.com/fxml"
+         spacing="5">
+
+    <padding>
+        <Insets topRightBottomLeft="5"/>
+    </padding>
+
+    <!-- Tells user how many walls are selected, contents modified by code -->
+    <Text fx:id="wallsSelectedCount"/>
+
+    <!-- Main texture file selection -->
+    <HBox spacing="5">
+        <!-- Initiates a FileChooser dialog -->
+        <Button fx:id="mainOpenFileButton" onAction="#openMainTexture"/>
+
+        <!-- Clears the current texture (walls with no textures are transparent) -->
+        <Button fx:id="mainClearFileButton" onAction="#clearMainTexture"/>
+
+        <!-- Displays current texture file name, user can select a file by typing the name in -->
+        <TextField fx:id="mainFileName" onAction="#setMainTextureName"/>
+    </HBox>
+
+    <!-- Adjoin texture file selection -->
+    <HBox spacing="5">
+        <!-- Initiates a FileChooser dialog -->
+        <Button fx:id="adjOpenFileButton" onAction="#openAdjTexture"/>
+
+        <!-- Clears the current texture (walls with no textures are transparent) -->
+        <Button fx:id="adjClearFileButton" onAction="#clearAdjTexture"/>
+
+        <!-- Displays current texture file name, user can select a file by typing the name in -->
+        <TextField fx:id="adjFileName" onAction="#setAdjTextureName"/>
+    </HBox>
+
+</fx:root>

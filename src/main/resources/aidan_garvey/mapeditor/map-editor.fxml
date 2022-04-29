@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.canvas.Canvas?>
+
+<?import javafx.scene.shape.Box?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.Paint?>
+
+
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="aidan_garvey.mapeditor.MapEdController"
+           fx:id="tileEdWrapper">
+
+    <background>
+        <Background>
+            <fills>
+                <BackgroundFill fill="black"/>
+            </fills>
+        </Background>
+    </background>
+
+    <!-- Main tile editor display -->
+    <Canvas fx:id="tileEdCanvas" managed="false"/>
+
+    <!-- BorderPane for all toolbars, options, etc -->
+    <BorderPane>
+        <!-- MenuBar at top of screen with File, Edit, etc -->
+        <top>
+            <MenuBar>
+                <Menu text="File">
+                    <MenuItem text="New" onAction="#onNewFile"/>
+                    <MenuItem text="Open" onAction="#onOpenFile"/>
+                    <MenuItem text="Save" onAction="#onSaveFile"/>
+                    <MenuItem text="Save As..." onAction="#onSaveAs"/>
+                    <MenuItem text="Exit" onAction="#onExit"/>
+                </Menu>
+
+                <Menu text="Edit">
+
+                </Menu>
+
+                <Menu text="View">
+
+                </Menu>
+            </MenuBar>
+        </top>
+
+        <!-- Scrolling vertical toolbar with tile options -->
+        <left>
+            <ScrollPane fx:id="tileScrollPane" hbarPolicy="NEVER" vbarPolicy="ALWAYS">
+                <VBox fx:id="sectorSettings" spacing="5" alignment="CENTER">
+                    <padding>
+                        <Insets topRightBottomLeft="5"/>
+                    </padding>
+
+                    <!-- button to delete current sector -->
+                    <Button fx:id="deleteSectorButton" onAction="#deleteSector"
+                            text="Delete"/>
+
+                    <Separator/>
+
+                    <!-- wall selection - select north, east, south or west -->
+                    <GridPane hgap="5" vgap="5">
+
+                        <Label text="Walls"
+                               GridPane.columnIndex="0"
+                               GridPane.rowIndex="0"
+                               GridPane.rowSpan="2"/>
+                        <ToggleButton fx:id="westWallButton" onAction="#toggleWall"
+                                      text="W"
+                                      prefWidth="30"
+                                      GridPane.columnIndex="1"
+                                      GridPane.rowIndex="0"
+                                      GridPane.rowSpan="2"/>
+                        <ToggleButton fx:id="northWallButton" onAction="#toggleWall"
+                                      text="N"
+                                      prefWidth="30"
+                                      GridPane.columnIndex="2"
+                                      GridPane.rowIndex="0"/>
+                        <ToggleButton fx:id="southWallButton" onAction="#toggleWall"
+                                      text="S"
+                                      prefWidth="30"
+                                      GridPane.columnIndex="2"
+                                      GridPane.rowIndex="1"/>
+                        <ToggleButton fx:id="eastWallButton" onAction="#toggleWall"
+                                      text="E"
+                                      prefWidth="30"
+                                      GridPane.columnIndex="3"
+                                      GridPane.rowIndex="0"
+                                      GridPane.rowSpan="2"/>
+
+                        <!-- shortcut to select all walls (if all walls are selected, deselects all walls) -->
+                        <Button onAction="#toggleAllWalls"
+                                text="All"
+                                GridPane.columnIndex="4"
+                                GridPane.rowIndex="0"
+                                GridPane.halignment="CENTER"
+                                GridPane.hgrow="ALWAYS"/>
+
+                        <!-- shortcut to select all adjoined walls -->
+                        <Button onAction="#selectAdjoinedWalls"
+                                text="Adjoined"
+                                GridPane.columnIndex="4"
+                                GridPane.rowIndex="1"
+                                GridPane.halignment="CENTER"
+                                GridPane.hgrow="ALWAYS"/>
+
+                    </GridPane>
+                    <!-- End wall selection -->
+
+                    <!-- Wall options, once a wall is selected -->
+                    <GridPane fx:id="mainWallOptions" hgap="5" vgap="5">
+
+                        <!-- Select main wall texture file -->
+                        <Label text="Texture"
+                               GridPane.columnIndex="0"
+                               GridPane.columnSpan="2"
+                               GridPane.rowIndex="0"/>
+
+                        <Button fx:id="mainTextureFileButton" onAction="#openMainTextureFile"
+                                GridPane.columnIndex="0"
+                                GridPane.rowIndex="1"/>
+
+                        <GridPane hgap="5"
+                              GridPane.columnIndex="1"
+                              GridPane.rowIndex="1">
+
+                            <!-- set texture to none (transparent) -->
+                            <Button fx:id="clearMainTextureButton" onAction="#clearMainTexture"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="0"/>
+
+                            <!-- display name of current texture and allow changing by typing file name -->
+                            <TextField fx:id="mainTextureName" onAction="#setMainTextureName"
+                                       GridPane.columnIndex="1"
+                                       GridPane.rowIndex="0"
+                                       GridPane.hgrow="ALWAYS"/>
+                        </GridPane>
+
+                        <!-- option to draw texture up from floor (relevant for half walls) -->
+                        <Label text="Align texture to bottom of wall?"
+                               GridPane.rowIndex="2"
+                               GridPane.columnIndex="1"/>
+                        <CheckBox fx:id="texAlignButton" onAction="#toggleTexAlign"
+                                  GridPane.halignment="CENTER"
+                                  GridPane.rowIndex="2"
+                                  GridPane.columnIndex="0"/>
+
+                        <!-- Buttons to flip texture horizontally or vertically -->
+                        <Label text="Horizontal Flip"
+                               GridPane.rowIndex="3"
+                               GridPane.columnIndex="1"/>
+                        <CheckBox fx:id="mainHFlipButton" onAction="#flipMainTexture"
+                                  GridPane.halignment="CENTER"
+                                  GridPane.rowIndex="3"
+                                  GridPane.columnIndex="0"/>
+                        <Label text="Vertical Flip"
+                               GridPane.rowIndex="4"
+                               GridPane.columnIndex="1"/>
+                        <CheckBox fx:id="mainVFlipButton" onAction="#flipMainTexture"
+                                  GridPane.halignment="CENTER"
+                                  GridPane.rowIndex="4"
+                                  GridPane.columnIndex="0"/>
+
+                        <!-- Toggle Button for adjoin -->
+                        <Label text="Adjoin"
+                               GridPane.columnIndex="1"
+                               GridPane.rowIndex="5"/>
+                        <CheckBox fx:id="wallAdjoinButton" onAction="#toggleWallAdjoin"
+                                  GridPane.halignment="CENTER"
+                                  GridPane.columnIndex="0"
+                                  GridPane.rowIndex="5"/>
+
+                        <!-- Submenu for adjoined sectors -->
+                        <GridPane fx:id="adjoinedWallOptions" hgap="5" vgap="5"
+                                  GridPane.columnIndex="0"
+                                  GridPane.columnSpan="2"
+                                  GridPane.rowIndex="6">
+                            <!-- Padding for indentation, this is supposed to look like a sublist -->
+                            <padding>
+                                <Insets left="10"/>
+                            </padding>
+
+                            <!-- adjoined sectors prevent movement -->
+                            <Label text="Blocks Movement?"
+                                   GridPane.columnIndex="1"
+                                   GridPane.rowIndex="0"/>
+                            <CheckBox fx:id="movementBlockButton" onAction="#toggleBlockMovement"
+                                      GridPane.halignment="CENTER"
+                                      GridPane.columnIndex="0"
+                                      GridPane.rowIndex="0"/>
+
+                            <!-- adjoined sectors block projectiles -->
+                            <Label text="Blocks Projectiles?"
+                                   GridPane.columnIndex="1"
+                                   GridPane.rowIndex="1"/>
+                            <CheckBox fx:id="projectileBlockButton" onAction="#toggleBlockProjectiles"
+                                      GridPane.halignment="CENTER"
+                                      GridPane.columnIndex="0"
+                                      GridPane.rowIndex="1"/>
+
+                            <!-- select adjoin texture file -->
+                            <Label text="Adjoin Texture"
+                                   GridPane.columnIndex="0"
+                                   GridPane.columnSpan="2"
+                                   GridPane.rowIndex="2"/>
+                            <Button fx:id="adjoinTextureFileButton" onAction="#openAdjoinTextureFile"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="3"/>
+
+                            <GridPane hgap="5"
+                                  GridPane.columnIndex="1"
+                                  GridPane.rowIndex="3">
+
+                                <!-- Button to set no texture -->
+                                <Button fx:id="clearAdjTextureButton" onAction="#clearAdjoinTexture"
+                                        GridPane.columnIndex="0"
+                                        GridPane.rowIndex="0"/>
+                                <!-- display name of current texture, allow user to choose texture by entering file name -->
+                                <TextField fx:id="adjoinTextureName" onAction="#setAdjTextureName"
+                                           GridPane.columnIndex="1"
+                                           GridPane.rowIndex="0"
+                                           GridPane.hgrow="ALWAYS"/>
+                            </GridPane>
+
+                            <!-- option to draw texture upwards from floor -->
+                            <Label text="Align texture to bottom of wall?"
+                                   GridPane.columnIndex="1"
+                                   GridPane.rowIndex="4"/>
+                            <CheckBox fx:id="adjoinTexAlignButton" onAction="#toggleAdjTexAlign"
+                                      GridPane.halignment="CENTER"
+                                      GridPane.columnIndex="0"
+                                      GridPane.rowIndex="4"/>
+
+                            <!-- Buttons to flip texture horizontally and vertically -->
+                            <Label text="Flip Horizontally"
+                                   GridPane.columnIndex="1"
+                                   GridPane.rowIndex="5"/>
+                            <CheckBox fx:id="adjHFlipButton" onAction="#flipAdjTexture"
+                                      GridPane.halignment="CENTER"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="5"/>
+
+                            <Label text="Flip Vertically"
+                                   GridPane.columnIndex="1"
+                                   GridPane.rowIndex="6"/>
+                            <CheckBox fx:id="adjVFlipButton" onAction="#flipAdjTexture"
+                                      GridPane.halignment="CENTER"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="6"/>
+
+                        </GridPane>
+                        <!-- END adjoinedWallOptions -->
+
+                    </GridPane>
+                    <!-- END tileEdWallOptions -->
+
+                    <Separator/>
+
+                    <!-- Floor and ceiling options -->
+                    <GridPane hgap="5" vgap="5">
+                        <!-- Floor texture (if not adjoined) -->
+                        <Label text="Floor Texture"
+                               GridPane.columnIndex="0"
+                               GridPane.columnSpan="3"
+                               GridPane.rowIndex="0"/>
+                        <Button fx:id="floorTextureFileButton" onAction="#openFloorTextureFile"
+                                GridPane.columnIndex="0"
+                                GridPane.rowIndex="1"/>
+                        <!-- clear floor texture -->
+                        <Button fx:id="clearFloorTextureButton" onAction="#clearFloorTexture"
+                                GridPane.columnIndex="1"
+                                GridPane.rowIndex="1"/>
+
+                        <TextField fx:id="floorTextureName" onAction="#setFloorTextureName"
+                                   GridPane.columnIndex="2"
+                                   GridPane.rowIndex="1"
+                                   GridPane.hgrow="ALWAYS"/>
+
+                        <!-- Button for adjoining the floor to the ceiling below -->
+                        <CheckBox fx:id="adjoinFloorButton" onAction="#toggleAdjoinFloor"
+                                  GridPane.columnIndex="0"
+                                  GridPane.rowIndex="2"
+                                  GridPane.halignment="CENTER"/>
+                        <Label text="Adjoin floor"
+                               GridPane.columnIndex="1"
+                               GridPane.rowIndex="2"
+                               GridPane.columnSpan="2"/>
+
+                    </GridPane>
+
+                    <GridPane hgap="5" vgap="5">
+                        <!-- Ceiling Texture (if not adjoined) -->
+                        <Label text="Ceiling Texture"
+                               GridPane.columnIndex="0"
+                               GridPane.columnSpan="3"
+                               GridPane.rowIndex="0"/>
+                        <Button fx:id="ceilingTextureFileButton" onAction="#openCeilingTextureFile"
+                                GridPane.columnIndex="0"
+                                GridPane.rowIndex="1"/>
+                        <Button fx:id="clearCeilingTextureButton" onAction="#clearCeilingTexture"
+                                GridPane.columnIndex="1"
+                                GridPane.rowIndex="1"/>
+
+                        <TextField fx:id="ceilingTextureName" onAction="#setCeilingTextureName"
+                                   GridPane.columnIndex="2"
+                                   GridPane.rowIndex="1"
+                                   GridPane.hgrow="ALWAYS"/>
+
+                        <!-- Button to make the ceiling a "sky" -->
+                        <CheckBox fx:id="toggleSkyButton" onAction="#toggleCeilingSky"
+                                  GridPane.columnIndex="0"
+                                  GridPane.rowIndex="2"
+                                  GridPane.halignment="CENTER"/>
+                        <Label text="Sky"
+                               GridPane.columnIndex="1"
+                               GridPane.rowIndex="2"
+                               GridPane.columnSpan="2"/>
+
+                        <!-- Button for adjoining ceiling to the floor above -->
+                        <CheckBox fx:id="adjoinCeilingButton" onAction="#toggleAdjoinCeiling"
+                                  GridPane.columnIndex="0"
+                                  GridPane.rowIndex="3"
+                                  GridPane.halignment="CENTER"/>
+                        <Label text="Adjoin ceiling"
+                               GridPane.columnIndex="1"
+                               GridPane.rowIndex="3"
+                               GridPane.columnSpan="2"/>
+
+                    </GridPane>
+                    <!-- END floor and ceiling options -->
+                    
+                    <!-- Area for a DoorOptions node -->
+                    <VBox fx:id="doorOptionsContainer"/>
+
+                </VBox>
+            </ScrollPane>
+        </left>
+
+        <center>
+            <StackPane alignment="TOP_RIGHT" fx:id="tileEdDisplayRegion">
+                <padding>
+                    <Insets topRightBottomLeft="10"/>
+                </padding>
+
+                <!-- Icon to display map orientation to user -->
+                <ImageView fx:id="axisGuideBox"/>
+
+            </StackPane>
+        </center>
+
+        <!-- General options bar on the right -->
+        <right>
+            <VBox spacing="5">
+                <background>
+                    <Background>
+                        <fills>
+                            <BackgroundFill fill="white"/>
+                        </fills>
+                    </Background>
+                </background>
+
+                <padding>
+                    <Insets topRightBottomLeft="5"/>
+                </padding>
+
+                <!-- Buttons to switch floors -->
+                <GridPane hgap="5" vgap="5">
+                    <Label text="Floor: "
+                           GridPane.rowIndex="0"
+                           GridPane.columnIndex="0"
+                           GridPane.rowSpan="2"/>
+                    <Text fx:id="currentFloorNumber" text="0"
+                          GridPane.rowIndex="0"
+                          GridPane.columnIndex="1"
+                          GridPane.rowSpan="2"/>
+                    <Button fx:id="floorUpButton" onAction="#changeFloorUp"
+                            GridPane.rowIndex="0"
+                            GridPane.columnIndex="2"/>
+                    <Button fx:id="floorDownButton" onAction="#changeFloorDown"
+                            GridPane.rowIndex="1"
+                            GridPane.columnIndex="2"/>
+                </GridPane>
+
+                <!-- Button to toggle grid lines, text changed by code -->
+                <Button fx:id="gridLinesButton" onAction="#toggleGridLines"/>
+
+                <!-- Mode switching buttons -->
+                <GridPane hgap="5" vgap="5">
+                    <RadioButton fx:id="sectorModeButton" onAction="#changeMode"
+                                 text="Sector Mode"
+                                 GridPane.rowIndex="0"
+                                 GridPane.columnIndex="0">
+                        <toggleGroup>
+                            <ToggleGroup fx:id="modeSelection"/>
+                        </toggleGroup>
+                    </RadioButton>
+
+                    <RadioButton fx:id="surfaceModeButton" onAction="#changeMode"
+                                 text="Surface Mode"
+                                 GridPane.rowIndex="1"
+                                 GridPane.columnIndex="0">
+                        <toggleGroup>
+                            <fx:reference source="modeSelection"/>
+                        </toggleGroup>
+                    </RadioButton>
+
+                    <RadioButton fx:id="textureModeButton" onAction="#changeMode"
+                                 text="Texture Mode"
+                                 GridPane.rowIndex="2"
+                                 GridPane.columnIndex="0">
+                        <toggleGroup>
+                            <fx:reference source="modeSelection"/>
+                        </toggleGroup>
+                    </RadioButton>
+
+                </GridPane>
+
+            </VBox>
+        </right>
+
+        <!-- Bottom bar contains some additional information like mouse position in map coordinates -->
+        <bottom>
+            <GridPane hgap="5">
+                <padding>
+                    <Insets topRightBottomLeft="5"/>
+                </padding>
+
+                <background>
+                    <Background>
+                        <fills>
+                            <BackgroundFill fill="white"/>
+                        </fills>
+                    </Background>
+                </background>
+
+                <!-- Current Map File Name -->
+                <Text fx:id="fileNameText" text="untitled"
+                      GridPane.columnIndex="0"
+                      GridPane.rowIndex="0"
+                      GridPane.halignment="LEFT"/>
+
+                <Separator orientation="VERTICAL"
+                           GridPane.columnIndex="1"
+                           GridPane.rowIndex="0"/>
+
+                <!-- Tell user if changes have been saved -->
+                <Text fx:id="modifiedText" text="Modified"
+                      GridPane.columnIndex="2"
+                      GridPane.rowIndex="0"
+                      GridPane.halignment="LEFT"/>
+
+                <!-- Mouse position: text is modified by code when mouse is moved -->
+                <Text fx:id="mousePosZ"
+                      GridPane.columnIndex="8"
+                      GridPane.rowIndex="0"
+                      GridPane.halignment="RIGHT"
+                      GridPane.hgrow="ALWAYS"/> <!-- ensure coordinates are on the right -->
+                <Text fx:id="mousePosX"
+                      GridPane.columnIndex="9"
+                      GridPane.rowIndex="0"
+                      GridPane.halignment="RIGHT"/>
+            </GridPane>
+        </bottom>
+
+    </BorderPane>
+
+</StackPane>

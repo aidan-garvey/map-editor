@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Text?>
+<fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx"
+         xmlns:fx="http://javafx.com/fxml"
+         spacing="5" alignment="CENTER">
+    
+    <padding>
+        <Insets topRightBottomLeft="5"/>
+    </padding>
+
+    <!-- TODO: some kind of 3D visual would be nice -->
+
+    <!-- A guide image surrounded by Spinners for controlling the ceiling corner heights -->
+    <Text fx:id="ceilingText" text="Ceiling"/>
+    <GridPane fx:id="ceilingSpinnerPane" hgap="5" vgap="5">
+        <columnConstraints>
+            <ColumnConstraints maxWidth="50" halignment="RIGHT"/>
+            <ColumnConstraints maxWidth="50" halignment="CENTER"/>
+            <ColumnConstraints maxWidth="50" halignment="LEFT"/>
+        </columnConstraints>
+
+        <ImageView fx:id="ceilingWestImageView"
+                   GridPane.rowIndex="0"
+                   GridPane.columnIndex="0"/>
+        <Spinner fx:id="ceilingNWSpinner" min="0" max="2" initialValue="2" editable="true"
+                 GridPane.rowIndex="0"
+                 GridPane.columnIndex="1"/>
+        <ImageView fx:id="ceilingNorthImageView"
+                   GridPane.rowIndex="0"
+                   GridPane.columnIndex="2"/>
+
+        <Spinner fx:id="ceilingSWSpinner" min="0" max="2" initialValue="2" editable="true"
+                 GridPane.rowIndex="1"
+                 GridPane.columnIndex="0"/>
+        <Spinner fx:id="ceilingCenterSpinner" min="0" max="2" initialValue="2" editable="true"
+                 GridPane.rowIndex="1"
+                 GridPane.columnIndex="1"/>
+        <Spinner fx:id="ceilingNESpinner" min="0" max="2" initialValue="2" editable="true"
+                 GridPane.rowIndex="1"
+                 GridPane.columnIndex="2"/>
+        <!--
+        <ImageView fx:id="ceilingGuideImageView"
+                   GridPane.rowIndex="1"
+                   GridPane.columnIndex="1"/>
+                   -->
+
+        <ImageView fx:id="ceilingSouthImageView"
+                   GridPane.rowIndex="2"
+                   GridPane.columnIndex="0"/>
+        <Spinner fx:id="ceilingSESpinner" min="0" max="2" initialValue="2" editable="true"
+                 GridPane.rowIndex="2"
+                 GridPane.columnIndex="1"/>
+        <ImageView fx:id="ceilingEastImageView"
+                   GridPane.rowIndex="2"
+                   GridPane.columnIndex="2"/>
+    </GridPane>
+
+    <Label text="Left click and drag to rotate"/>
+    <Label text="Right click to reset"/>
+    <StackPane fx:id="subSceneContainer"/>
+
+    <!-- Same idea but for the floor -->
+    <Text fx:id="floorText" text="Floor"/>
+    <GridPane fx:id="floorSpinnerPane" hgap="5" vgap="5">
+        <columnConstraints>
+            <ColumnConstraints maxWidth="50" halignment="RIGHT"/>
+            <ColumnConstraints maxWidth="50" halignment="CENTER"/>
+            <ColumnConstraints maxWidth="50" halignment="LEFT"/>
+        </columnConstraints>
+
+        <ImageView fx:id="floorWestImageView"
+                   GridPane.rowIndex="0"
+                   GridPane.columnIndex="0"/>
+        <Spinner fx:id="floorNWSpinner" min="0" max="2" initialValue="0" editable="true"
+                 GridPane.rowIndex="0"
+                 GridPane.columnIndex="1"/>
+        <ImageView fx:id="floorNorthImageView"
+                   GridPane.rowIndex="0"
+                   GridPane.columnIndex="2"/>
+
+        <Spinner fx:id="floorSWSpinner" min="0" max="2" initialValue="0" editable="true"
+                 GridPane.rowIndex="1"
+                 GridPane.columnIndex="0"/>
+        <Spinner fx:id="floorCenterSpinner" min="0" max="2" initialValue="0" editable="true"
+                 GridPane.rowIndex="1"
+                 GridPane.columnIndex="1"/>
+        <Spinner fx:id="floorNESpinner" min="0" max="2" initialValue="0" editable="true"
+                 GridPane.rowIndex="1"
+                 GridPane.columnIndex="2"/>
+        <!--
+        <ImageView fx:id="floorGuideImageView"
+                   GridPane.rowIndex="1"
+                   GridPane.columnIndex="1"/>
+                   -->
+
+        <ImageView fx:id="floorSouthImageView"
+                   GridPane.rowIndex="2"
+                   GridPane.columnIndex="0"/>
+        <Spinner fx:id="floorSESpinner" min="0" max="2" initialValue="0" editable="true"
+                 GridPane.rowIndex="2"
+                 GridPane.columnIndex="1"/>
+        <ImageView fx:id="floorEastImageView"
+                   GridPane.rowIndex="2"
+                   GridPane.columnIndex="2"/>
+    </GridPane>
+
+    <Separator/>
+
+    <!-- Show a guide for how to use the spinners -->
+    <Button fx:id="helpButton" text="Help" onAction="#displayHelp"/>
+
+</fx:root>
